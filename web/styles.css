@@ -260,6 +260,43 @@ button { cursor: pointer; }
 .category-name { color: var(--ink); font-weight: 720; }
 .category-count { color: var(--muted); font-size: calc(.88rem * var(--font-scale)); }
 
+.insight-summary {
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  color: var(--ink);
+  line-height: 1.55;
+  margin: 18px 0;
+  padding: 16px 18px;
+}
+.insight-chart { display: grid; gap: 11px; margin: 22px 0; }
+.insight-row {
+  align-items: center;
+  display: grid;
+  gap: 12px;
+  grid-template-columns: minmax(110px, 190px) minmax(40px, 1fr) 90px;
+}
+.insight-category { color: var(--ink); font-weight: 620; overflow-wrap: anywhere; }
+.insight-track { background: var(--paper); border-radius: 999px; height: 16px; overflow: hidden; }
+.insight-bar { background: var(--yellow); border-radius: inherit; display: block; height: 100%; }
+.insight-value { color: var(--muted); font-size: calc(.86rem * var(--font-scale)); text-align: right; }
+
+.daily-accuracy-section { margin: 28px 0 18px; }
+.daily-accuracy-description { color: var(--muted); line-height: 1.5; margin: -4px 0 14px; }
+.daily-accuracy-chart {
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  overflow-x: auto;
+  padding: 12px;
+}
+.daily-accuracy-chart svg { display: block; max-width: none; }
+.daily-accuracy-grid { stroke: var(--line); stroke-width: 1; }
+.daily-accuracy-axis { fill: var(--muted); font-size: 12px; }
+.daily-accuracy-line { fill: none; stroke: var(--yellow); stroke-linecap: round; stroke-linejoin: round; stroke-width: 3; }
+.daily-accuracy-point { fill: var(--yellow); stroke: var(--paper); stroke-width: 2; }
+.daily-accuracy-value { fill: var(--yellow); font-size: 12px; font-weight: 700; }
+
 .flashcard {
   margin: 24px auto;
   max-width: 680px;
@@ -336,6 +373,8 @@ button { cursor: pointer; }
   .action-title { font-size: calc(.96rem * var(--font-scale)); }
   .action-description { font-size: calc(.82rem * var(--font-scale)); }
   .category-card { padding: 14px 12px; }
+  .insight-row { gap: 8px; grid-template-columns: minmax(78px, 1fr) minmax(36px, 1.4fr) 76px; }
+  .insight-value { font-size: calc(.76rem * var(--font-scale)); }
   .word-row { gap: 7px; padding: 12px; }
   .button { padding: 9px 13px; }
   .site-footer { display: flex; flex-direction: column; gap: 7px; padding: 16px 16px calc(76px + env(safe-area-inset-bottom)); }

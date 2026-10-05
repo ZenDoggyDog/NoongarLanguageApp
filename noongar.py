@@ -1,4 +1,3 @@
-import csv
 import json
 import random
 import shutil
@@ -8,6 +7,15 @@ import tkinter as tk
 import tkinter.font as tkfont
 from pathlib import Path
 from tkinter import messagebox, ttk
+
+from noongar_data import (
+    build_quiz_options,
+    clean_daily_accuracy,
+    load_vocabulary,
+    record_daily_accuracy,
+    search_vocabulary,
+    summarize_categories,
+)
 
 
 APP_TITLE = "Noongar Language Learning"
@@ -38,46 +46,6 @@ def find_dictionary_file():
     return Path(__file__).resolve().parent / "Noongar categories.csv"
 
 
-def load_vocabulary(csv_path):
-    vocabulary = []
-    with csv_path.open(mode="r", encoding="utf-8-sig", newline="") as csv_file:
-        reader = csv.DictReader(csv_file)
-        if not reader.fieldnames:
-            raise ValueError("The dictionary CSV has no header row.")
-
-        normalized_headers = {
-            (header or "").strip().casefold(): header
-            for header in reader.fieldnames
-        }
-        if "noongar" not in normalized_headers or "english" not in normalized_headers:
-            raise ValueError(
-                "The dictionary CSV must have 'Noongar' and 'English' columns."
-            )
-        category_header = normalized_headers.get("category")
-
-        for row in reader:
-            noongar_word = (
-                row.get(normalized_headers["noongar"]) or ""
-            ).strip()
-            english_word = (
-                row.get(normalized_headers["english"]) or ""
-            ).strip()
-            category = (
-                (row.get(category_header) or "").strip()
-                if category_header
-                else ""
-            )
-            if noongar_word and english_word:
-                vocabulary.append(
-                    {
-                        "noongar": noongar_word,
-                        "english": english_word,
-                        "category": category or "Uncategorised",
-                    }
-                )
-    return vocabulary
-
-
 class NoongarApp:
     def __init__(self, root):
         self.root = root
@@ -98,6 +66,7 @@ class NoongarApp:
         )
         self.total_quiz_questions = 0
         self.correct_answers = 0
+        self.daily_accuracy = {}
         self.reviewed_words = set()
         self.missed_words = set()
         self.saved_words = set()
@@ -133,6 +102,9 @@ class NoongarApp:
                 min(correct, self.total_quiz_questions)
                 if isinstance(correct, int) and correct >= 0
                 else 0
+            )
+            self.daily_accuracy = clean_daily_accuracy(
+                stored.get("daily_accuracy", {})
             )
             for attribute in ("reviewed_words", "missed_words", "saved_words"):
                 stored_name = {
@@ -176,6 +148,7 @@ class NoongarApp:
         data = {
             "attempted": self.total_quiz_questions,
             "correct": self.correct_answers,
+            "daily_accuracy": self.daily_accuracy,
             "reviewed": sorted(self.reviewed_words),
             "missed": sorted(self.missed_words),
             "saved": sorted(self.saved_words),
@@ -328,6 +301,7 @@ class NoongarApp:
             ("Browse Flashcards", self.show_flashcards),
             ("Browse Categories", self.show_categories),
             ("Interactive Quiz", self.show_quiz),
+            ("Dictionary Insights", self.show_insights),
             ("Saved Words & Lists", self.show_saved_words),
             ("Study Progress", self.show_stats),
         ]
@@ -470,6 +444,7 @@ class NoongarApp:
             ("Browse Flashcards", self.show_flashcards),
             ("Browse Categories", self.show_categories),
             ("Interactive Quiz", self.show_quiz),
+            ("Dictionary Insights", self.show_insights),
             ("Saved Words & Lists", self.show_saved_words),
             ("Practice Missed Words", self.practice_missed_words),
         ]
@@ -497,7 +472,7 @@ class NoongarApp:
                 pady=12,
                 sticky="nsew",
             )
-        for row in range(3):
+        for row in range(4):
             card_area.rowconfigure(row, weight=1)
         for column in range(2):
             card_area.columnconfigure(column, weight=1)
@@ -566,12 +541,7 @@ class NoongarApp:
             speak_button.configure(state=tk.DISABLED)
             if not value:
                 return
-            matches = [
-                item
-                for item in self.vocab
-                if value in item["noongar"].casefold()
-                or value in item["english"].casefold()
-            ]
+            matches = search_vocabulary(self.vocab, value)
             for item in matches:
                 table.insert(
                     "",
@@ -615,6 +585,88 @@ class NoongarApp:
             values = table.item(selected[0], "values")
             if values:
                 self.speak_noongar(str(values[0]))
+
+    def show_insights(self):
+        summaries = summarize_categories(self.vocab)
+        self.page_heading(
+            "Dictionary Insights",
+            "A count of dictionary entries by category. These are vocabulary records, not measures of how often words are used.",
+        )
+        if not summaries:
+            tk.Label(
+                self.content,
+                text="No vocabulary entries are available to analyse.",
+                bg=BLACK,
+                fg=MUTED_TEXT,
+                font=self.app_font(12),
+            ).pack(anchor=tk.W, padx=30, pady=12)
+            return
+
+        largest = summaries[0]
+        tk.Label(
+            self.content,
+            text=(
+                f"{len(self.vocab)} dictionary entries across "
+                f"{len(summaries)} categories. Largest category: "
+                f"{largest.category} ({largest.count} entries, "
+                f"{largest.percentage:.1f}%)."
+            ),
+            bg=BLACK_SOFT,
+            fg=TEXT,
+            font=self.app_font(13, "bold"),
+            wraplength=730,
+            justify=tk.LEFT,
+            padx=16,
+            pady=12,
+        ).pack(fill=tk.X, padx=30, pady=(0, 16))
+
+        chart = tk.Frame(self.content, bg=BLACK)
+        chart.pack(fill=tk.BOTH, expand=True, padx=30, pady=(0, 20))
+        maximum = max(summary.count for summary in summaries)
+        for summary in summaries:
+            row = tk.Frame(chart, bg=BLACK)
+            row.pack(fill=tk.X, pady=4)
+            tk.Label(
+                row,
+                text=summary.category,
+                bg=BLACK,
+                fg=TEXT,
+                font=self.app_font(11),
+                anchor=tk.W,
+                width=26,
+            ).pack(side=tk.LEFT)
+            bar = tk.Canvas(
+                row,
+                height=20,
+                bg=BLACK_SOFT,
+                highlightthickness=0,
+                borderwidth=0,
+            )
+            bar.pack(side=tk.LEFT, fill=tk.X, expand=True, padx=(4, 10))
+
+            def draw_bar(event, canvas=bar, count=summary.count):
+                canvas.delete("all")
+                width = max(0, int(event.width * count / maximum))
+                if width:
+                    canvas.create_rectangle(
+                        0,
+                        2,
+                        width,
+                        event.height - 2,
+                        fill=YELLOW,
+                        outline="",
+                    )
+
+            bar.bind("<Configure>", draw_bar)
+            tk.Label(
+                row,
+                text=f"{summary.count} · {summary.percentage:.1f}%",
+                bg=BLACK,
+                fg=MUTED_TEXT,
+                font=self.app_font(10),
+                anchor=tk.E,
+                width=12,
+            ).pack(side=tk.LEFT)
 
     def show_categories(self):
         self.page_heading(
@@ -1018,18 +1070,7 @@ class NoongarApp:
                 for item in option_pool
                 if item["category"] == self.quiz_category.get()
             ]
-        answers = {
-            item["english"].casefold(): item["english"]
-            for item in option_pool
-        }
-        wrong_answers = [
-            answer
-            for key, answer in answers.items()
-            if key != question["english"].casefold()
-        ]
-        options = random.sample(wrong_answers, min(3, len(wrong_answers)))
-        options.append(question["english"])
-        random.shuffle(options)
+        options = build_quiz_options(question, option_pool)
         self.quiz_answer = tk.StringVar(value="")
 
         tk.Label(
@@ -1103,7 +1144,15 @@ class NoongarApp:
         question = self.quiz_questions[self.quiz_index]
         self.total_quiz_questions += 1
         key = word_key(question)
-        if selected.casefold() == question["english"].casefold():
+        answer_was_correct = (
+            selected.casefold() == question["english"].casefold()
+        )
+        self.daily_accuracy = record_daily_accuracy(
+            self.daily_accuracy,
+            int(answer_was_correct),
+            1,
+        )
+        if answer_was_correct:
             self.correct_answers += 1
             self.quiz_correct += 1
             self.missed_words.discard(key)
@@ -1155,7 +1204,7 @@ class NoongarApp:
     def show_stats(self):
         self.page_heading(
             "Study Progress",
-            "Quiz totals, reviewed words, and missed-word practice are saved on this device.",
+            "Quiz totals, daily accuracy, reviewed words, and missed-word practice are saved on this device.",
         )
         accuracy = (
             f"{self.correct_answers / self.total_quiz_questions * 100:.1f}%"
@@ -1196,6 +1245,8 @@ class NoongarApp:
                 font=self.app_font(14, "bold"),
             ).pack(side=tk.RIGHT)
 
+        self.draw_daily_accuracy_chart()
+
         tk.Button(
             self.content,
             text="Clear learning progress",
@@ -1204,16 +1255,119 @@ class NoongarApp:
             pady=7,
         ).pack(anchor=tk.W, padx=30, pady=12)
 
+    def draw_daily_accuracy_chart(self):
+        section = tk.Frame(self.content, bg=BLACK)
+        section.pack(fill=tk.X, padx=30, pady=(16, 8))
+        tk.Label(
+            section,
+            text="Quiz accuracy by date",
+            bg=BLACK,
+            fg=TEXT,
+            font=self.app_font(16, "bold"),
+        ).pack(anchor=tk.W, pady=(0, 4))
+        history = sorted(self.daily_accuracy.items())
+        if not history:
+            tk.Label(
+                section,
+                text="Complete quiz questions to start tracking daily accuracy.",
+                bg=BLACK,
+                fg=MUTED_TEXT,
+                font=self.app_font(11),
+            ).pack(anchor=tk.W, pady=(4, 12))
+            return
+
+        tk.Label(
+            section,
+            text="Each point shows the percentage correct on a day you answered quiz questions.",
+            bg=BLACK,
+            fg=MUTED_TEXT,
+            font=self.app_font(11),
+            wraplength=700,
+            justify=tk.LEFT,
+        ).pack(anchor=tk.W, pady=(0, 8))
+        plot_width = max(640, 90 * len(history) + 90)
+        chart = tk.Canvas(
+            section,
+            height=290,
+            width=plot_width,
+            bg=BLACK,
+            highlightthickness=0,
+            scrollregion=(0, 0, plot_width, 290),
+        )
+        chart.pack(fill=tk.X, expand=True)
+        scrollbar = ttk.Scrollbar(
+            section,
+            orient=tk.HORIZONTAL,
+            command=chart.xview,
+        )
+        chart.configure(xscrollcommand=scrollbar.set)
+        if plot_width > 700:
+            scrollbar.pack(fill=tk.X, pady=(2, 12))
+
+        left, right, top, bottom = 52, plot_width - 24, 24, 226
+        for percentage in (0, 25, 50, 75, 100):
+            y = bottom - (bottom - top) * percentage / 100
+            chart.create_line(left, y, right, y, fill=LINE)
+            chart.create_text(
+                left - 10,
+                y,
+                text=f"{percentage}%",
+                fill=MUTED_TEXT,
+                anchor=tk.E,
+                font=self.app_font(9),
+            )
+
+        points = []
+        for index, (day, counts) in enumerate(history):
+            x = (
+                left + (right - left) / 2
+                if len(history) == 1
+                else left + (right - left) * index / (len(history) - 1)
+            )
+            accuracy = counts["correct"] / counts["attempted"] * 100
+            y = bottom - (bottom - top) * accuracy / 100
+            points.append((x, y))
+            chart.create_text(
+                x,
+                bottom + 22,
+                text=f"{day[5:7]}/{day[8:10]}",
+                fill=MUTED_TEXT,
+                font=self.app_font(9),
+            )
+            chart.create_text(
+                x,
+                y - 12,
+                text=f"{accuracy:.0f}%",
+                fill=YELLOW,
+                font=self.app_font(9, "bold"),
+            )
+        if len(points) > 1:
+            chart.create_line(
+                *[coordinate for point in points for coordinate in point],
+                fill=YELLOW,
+                width=2,
+            )
+        for x, y in points:
+            chart.create_oval(
+                x - 4,
+                y - 4,
+                x + 4,
+                y + 4,
+                fill=YELLOW,
+                outline=BLACK,
+            )
+
     def clear_learning_progress(self):
         if not messagebox.askyesno(
             "Clear learning progress",
-            "Clear quiz totals, reviewed words, and missed-word practice? "
+            "Clear quiz totals, daily accuracy history, reviewed words, and missed-word practice? "
             "Saved words and lists will be kept.",
             parent=self.root,
         ):
             return
         self.total_quiz_questions = 0
         self.correct_answers = 0
+        self.daily_accuracy.clear()
         self.reviewed_words.clear()
         self.missed_words.clear()
         self.save_study_data()

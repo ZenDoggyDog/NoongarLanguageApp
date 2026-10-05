@@ -78,6 +78,7 @@ function readDictionary(text) {
 const studyData = {
   attempted: 0,
   correct: 0,
+  dailyAccuracy: {},
   reviewed: [],
   missed: [],
   saved: [],
@@ -88,6 +89,35 @@ const stats = studyData;
 
 function wordKey(item) {
   return `${item.noongar}\u0000${item.english}`;
+}
+
+function localDateKey(date = new Date()) {
+  return [
+    date.getFullYear(),
+    String(date.getMonth() + 1).padStart(2, "0"),
+    String(date.getDate()).padStart(2, "0"),
+  ].join("-");
+}
+
+function cleanDailyAccuracy(history) {
+  if (!history || typeof history !== "object" || Array.isArray(history)) return {};
+  return Object.fromEntries(
+    Object.entries(history).filter(([day, counts]) => {
+      if (!/^\d{4}-\d{2}-\d{2}$/.test(day) || !counts || typeof counts !== "object") {
+        return false;
+      }
+      const parsedDate = new Date(`${day}T00:00:00`);
+      return localDateKey(parsedDate) === day
+        && Number.isSafeInteger(counts.correct)
+        && Number.isSafeInteger(counts.attempted)
+        && counts.attempted > 0
+        && counts.correct >= 0
+        && counts.correct <= counts.attempted;
+    }).map(([day, counts]) => [day, {
+      correct: counts.correct,
+      attempted: counts.attempted,
+    }]),
+  );
 }
 
 function loadStudyData() {
@@ -103,6 +133,7 @@ function loadStudyData() {
     studyData.correct = Number.isSafeInteger(stored.correct) && stored.correct >= 0
       ? Math.min(stored.correct, studyData.attempted)
       : 0;
+    studyData.dailyAccuracy = cleanDailyAccuracy(stored.dailyAccuracy);
     for (const field of ["reviewed", "missed", "saved"]) {
       studyData[field] = Array.isArray(stored[field])
         ? [...new Set(stored[field].filter((key) => typeof key === "string" && knownWords.has(key)))]
@@ -236,6 +267,7 @@ function setView(view) {
     home: renderHome,
     search: renderSearch,
     categories: renderCategories,
+    insights: renderInsights,
     flashcards: renderFlashcards,
     quiz: renderQuizSetup,
     stats: renderStats,
@@ -243,6 +275,24 @@ function setView(view) {
   };
   renderers[view]();
   appElement.focus({ preventScroll: true });
+}
+
+function summarizeCategories(items) {
+  if (!items.length) return [];
+  const counts = new Map();
+  for (const item of items) {
+    const category = item.category.trim() || "Uncategorised";
+    counts.set(category, (counts.get(category) || 0) + 1);
+  }
+  return [...counts.entries()]
+    .map(([category, count]) => ({
+      category,
+      count,
+      percentage: count / items.length * 100,
+    }))
+    .sort((left, right) =>
+      right.count - left.count || left.category.localeCompare(right.category),
+    );
 }
 
 function renderHome() {
@@ -271,6 +321,7 @@ function renderHome() {
   const actions = [
     ["⌕", "Search Dictionary", "Find a word in English or Noongar.", "search"],
     ["▦", "Browse Categories", "Explore words grouped by topic.", "categories"],
+    ["▥", "Dictionary Insights", "See how entries are distributed across categories.", "insights"],
     ["▤", "Browse Flashcards", "Reveal meanings and practice recall.", "flashcards"],
     ["✓", "Interactive Quiz", "Choose a category or the whole dictionary.", "quiz"],
     ["★", "Saved Words & Lists", "Bookmark words and create personal study lists.", "saved"],
@@ -290,6 +341,49 @@ function renderHome() {
     grid.append(card);
   }
   appElement.append(grid);
+}
+
+function renderInsights() {
+  page(
+    "Dictionary Insights",
+    "A count of dictionary entries by category. These are vocabulary records, not measures of how often words are used.",
+  );
+  const summaries = summarizeCategories(vocabulary);
+  if (!summaries.length) {
+    appElement.append(element("div", "empty-state", "No vocabulary entries are available to analyse."));
+    return;
+  }
+  const largest = summaries[0];
+  appElement.append(element(
+    "div",
+    "insight-summary",
+    `${vocabulary.length} dictionary entries across ${summaries.length} categories. Largest category: ${largest.category} (${largest.count} entries, ${largest.percentage.toFixed(1)}%).`,
+  ));
+  const chart = element("div", "insight-chart");
+  chart.setAttribute("role", "img");
+  chart.setAttribute(
+    "aria-label",
+    `Dictionary entries by category. ${summaries.map(({ category, count, percentage }) =>
+      `${category}: ${count} entries, ${percentage.toFixed(1)} percent`,
+    ).join("; ")}`,
+  );
+  const maxCount = largest.count;
+  for (const summary of summaries) {
+    const row = element("div", "insight-row");
+    const label = element("span", "insight-category", summary.category);
+    const track = element("span", "insight-track");
+    const bar = element("span", "insight-bar");
+    bar.style.width = `${summary.count / maxCount * 100}%`;
+    track.append(bar);
+    const value = element(
+      "span",
+      "insight-value",
+      `${summary.count} · ${summary.percentage.toFixed(1)}%`,
+    );
+    row.append(label, track, value);
+    chart.append(row);
+  }
+  appElement.append(chart);
 }
 
 function appendWordRow(container, item, showCategory = true) {
@@ -801,9 +895,13 @@ function renderQuizQuestion() {
     quiz.answered = true;
     quiz.attempted += 1;
     stats.attempted += 1;
+    const day = localDateKey();
+    studyData.dailyAccuracy[day] ||= { correct: 0, attempted: 0 };
+    studyData.dailyAccuracy[day].attempted += 1;
     if (selected.value.toLocaleLowerCase() === correctKey) {
       quiz.correct += 1;
       stats.correct += 1;
+      studyData.dailyAccuracy[day].correct += 1;
       studyData.missed = studyData.missed.filter((key) => key !== wordKey(question));
       feedback.textContent = "Correct! Well done.";
       feedback.className = "feedback correct";
@@ -835,7 +933,7 @@ function renderQuizQuestion() {
 }
 
 function renderStats() {
-  page("Study Progress", "Quiz totals, reviewed words, and missed-word practice are saved on this device.");
+  page("Study Progress", "Quiz totals, daily accuracy, reviewed words, and missed-word practice are saved on this device.");
   const accuracy = stats.attempted
     ? `${(stats.correct / stats.attempted * 100).toFixed(1)}%`
     : "Not available yet";
@@ -853,15 +951,131 @@ function renderStats() {
     strip.append(card);
   }
   appElement.append(strip);
+  renderDailyAccuracyChart();
   appElement.append(button("Clear learning progress", () => {
-    if (!window.confirm("Clear quiz totals, reviewed words, and missed-word practice? Saved words and lists will be kept.")) return;
+    if (!window.confirm("Clear quiz totals, daily accuracy history, reviewed words, and missed-word practice? Saved words and lists will be kept.")) return;
     studyData.attempted = 0;
     studyData.correct = 0;
+    studyData.dailyAccuracy = {};
     studyData.reviewed = [];
     studyData.missed = [];
     saveStudyData();
     renderStats();
   }, "button button-secondary"));
+}
+
+function renderDailyAccuracyChart() {
+  const section = element("section", "daily-accuracy-section");
+  section.append(
+    element("h2", "section-title", "Quiz accuracy by date"),
+    element(
+      "p",
+      "daily-accuracy-description",
+      "Each point shows the percentage correct on a day you answered quiz questions.",
+    ),
+  );
+  const history = Object.entries(studyData.dailyAccuracy)
+    .sort(([left], [right]) => left.localeCompare(right));
+  if (!history.length) {
+    section.append(element(
+      "div",
+      "empty-state",
+      "Complete quiz questions to start tracking daily accuracy.",
+    ));
+    appElement.append(section);
+    return;
+  }
+
+  const width = Math.max(640, history.length * 84 + 84);
+  const height = 300;
+  const left = 48;
+  const right = width - 24;
+  const top = 24;
+  const bottom = 232;
+  const xAt = (index) => history.length === 1
+    ? (left + right) / 2
+    : left + (right - left) * index / (history.length - 1);
+  const yAt = (accuracy) => bottom - (bottom - top) * accuracy / 100;
+  const chart = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+  chart.setAttribute("viewBox", `0 0 ${width} ${height}`);
+  chart.setAttribute("width", String(width));
+  chart.setAttribute("height", String(height));
+  chart.setAttribute("role", "img");
+  chart.setAttribute(
+    "aria-label",
+    `Daily quiz accuracy: ${history.map(([day, counts]) =>
+      `${day}, ${(counts.correct / counts.attempted * 100).toFixed(1)} percent correct from ${counts.attempted} questions`,
+    ).join("; ")}`,
+  );
+  const appendSvg = (tag, attributes, text) => {
+    const node = document.createElementNS("http://www.w3.org/2000/svg", tag);
+    for (const [name, value] of Object.entries(attributes)) {
+      node.setAttribute(name, String(value));
+    }
+    if (text !== undefined) node.textContent = text;
+    chart.append(node);
+    return node;
+  };
+  for (const percentage of [0, 25, 50, 75, 100]) {
+    const y = yAt(percentage);
+    appendSvg("line", {
+      x1: left,
+      x2: right,
+      y1: y,
+      y2: y,
+      class: "daily-accuracy-grid",
+    });
+    appendSvg("text", {
+      x: left - 8,
+      y: y + 4,
+      class: "daily-accuracy-axis",
+      "text-anchor": "end",
+    }, `${percentage}%`);
+  }
+  const points = history.map(([day, counts], index) => {
+    const accuracy = counts.correct / counts.attempted * 100;
+    return {
+      day,
+      accuracy,
+      attempted: counts.attempted,
+      x: xAt(index),
+      y: yAt(accuracy),
+    };
+  });
+  if (points.length > 1) {
+    appendSvg("polyline", {
+      points: points.map(({ x, y }) => `${x},${y}`).join(" "),
+      class: "daily-accuracy-line",
+    });
+  }
+  for (const point of points) {
+    const marker = appendSvg("circle", {
+      cx: point.x,
+      cy: point.y,
+      r: 5,
+      class: "daily-accuracy-point",
+    });
+    const tooltip = document.createElementNS("http://www.w3.org/2000/svg", "title");
+    tooltip.textContent = `${point.day}: ${point.accuracy.toFixed(1)}% (${point.attempted} questions)`;
+    marker.append(tooltip);
+    appendSvg("text", {
+      x: point.x,
+      y: point.y - 12,
+      class: "daily-accuracy-value",
+      "text-anchor": "middle",
+    }, `${point.accuracy.toFixed(0)}%`);
+    appendSvg("text", {
+      x: point.x,
+      y: bottom + 24,
+      class: "daily-accuracy-axis",
+      "text-anchor": "middle",
+    }, point.day.slice(5).replace("-", "/"));
+  }
+
+  const chartScroller = element("div", "daily-accuracy-chart");
+  chartScroller.append(chart);
+  section.append(chartScroller);
+  appElement.append(section);
 }
 
 for (const nav of navButtons) {
