@@ -75,7 +75,79 @@ function readDictionary(text) {
     .filter((item) => item.english && item.noongar);
 }
 
-const stats = { attempted: 0, correct: 0 };
+const studyData = {
+  attempted: 0,
+  correct: 0,
+  reviewed: [],
+  missed: [],
+  saved: [],
+  lists: {},
+  fontScale: 100,
+};
+const stats = studyData;
+
+function wordKey(item) {
+  return `${item.noongar}\u0000${item.english}`;
+}
+
+function loadStudyData() {
+  const knownWords = new Set(vocabulary.map(wordKey));
+  try {
+    const stored = JSON.parse(localStorage.getItem("noongar-study-data") || "{}");
+    if (!stored || typeof stored !== "object" || Array.isArray(stored)) {
+      throw new Error("Saved study data has an invalid format.");
+    }
+    studyData.attempted = Number.isSafeInteger(stored.attempted) && stored.attempted >= 0
+      ? stored.attempted
+      : 0;
+    studyData.correct = Number.isSafeInteger(stored.correct) && stored.correct >= 0
+      ? Math.min(stored.correct, studyData.attempted)
+      : 0;
+    for (const field of ["reviewed", "missed", "saved"]) {
+      studyData[field] = Array.isArray(stored[field])
+        ? [...new Set(stored[field].filter((key) => typeof key === "string" && knownWords.has(key)))]
+        : [];
+    }
+    if (stored.lists && typeof stored.lists === "object" && !Array.isArray(stored.lists)) {
+      studyData.lists = Object.fromEntries(
+        Object.entries(stored.lists)
+          .filter(([name, keys]) => typeof name === "string" && name.trim() && Array.isArray(keys))
+          .map(([name, keys]) => [name, [...new Set(keys.filter((key) =>
+            typeof key === "string" && knownWords.has(key) && studyData.saved.includes(key),
+          ))]]),
+      );
+    }
+    studyData.fontScale = Number.isInteger(stored.fontScale)
+      ? Math.min(130, Math.max(80, stored.fontScale))
+      : 100;
+    applyFontScale();
+  } catch (error) {
+    if (error instanceof SyntaxError || error instanceof Error) {
+      window.alert(`Saved progress could not be loaded: ${error.message}`);
+    }
+  }
+}
+
+function saveStudyData() {
+  try {
+    localStorage.setItem("noongar-study-data", JSON.stringify(studyData));
+  } catch (error) {
+    window.alert(`Your changes could not be saved on this device: ${error.message}`);
+  }
+}
+
+function applyFontScale() {
+  document.documentElement.style.setProperty(
+    "--font-scale",
+    String(studyData.fontScale / 100),
+  );
+}
+
+function changeFontScale(amount) {
+  studyData.fontScale = Math.min(130, Math.max(80, studyData.fontScale + amount));
+  applyFontScale();
+  saveStudyData();
+}
 
 function element(tag, className, text) {
   const node = document.createElement(tag);
@@ -167,6 +239,7 @@ function setView(view) {
     flashcards: renderFlashcards,
     quiz: renderQuizSetup,
     stats: renderStats,
+    saved: renderSavedWords,
   };
   renderers[view]();
   appElement.focus({ preventScroll: true });
@@ -200,10 +273,19 @@ function renderHome() {
     ["▦", "Browse Categories", "Explore words grouped by topic.", "categories"],
     ["▤", "Browse Flashcards", "Reveal meanings and practice recall.", "flashcards"],
     ["✓", "Interactive Quiz", "Choose a category or the whole dictionary.", "quiz"],
+    ["★", "Saved Words & Lists", "Bookmark words and create personal study lists.", "saved"],
+    ["↻", "Practice Missed Words", `${studyData.missed.length} word${studyData.missed.length === 1 ? "" : "s"} to review.`, "missed"],
   ];
   const grid = element("div", "action-grid");
   for (const [icon, title, description, view] of actions) {
-    const card = button("", () => setView(view), "action-card");
+    const card = button("", () => {
+      if (view === "missed") {
+        setView("quiz");
+        startQuiz("Practice missed words", "5");
+      } else {
+        setView(view);
+      }
+    }, "action-card");
     card.append(element("span", "action-icon", icon), element("span", "action-title", title), element("span", "action-description", description));
     grid.append(card);
   }
@@ -215,8 +297,155 @@ function appendWordRow(container, item, showCategory = true) {
   const word = element("div");
   word.append(element("div", "word-noongar", item.noongar), element("div", "word-english", item.english));
   if (showCategory) word.append(element("div", "word-category", item.category));
-  row.append(word, createPronounceButton(item.noongar));
+  const actions = element("div", "word-actions");
+  actions.append(createPronounceButton(item.noongar));
+  actions.append(button(
+    studyData.saved.includes(wordKey(item)) ? "Saved" : "Save",
+    () => {
+      const key = wordKey(item);
+      studyData.saved = studyData.saved.includes(key)
+        ? studyData.saved.filter((savedKey) => savedKey !== key)
+        : [...studyData.saved, key];
+      for (const name of Object.keys(studyData.lists)) {
+        studyData.lists[name] = studyData.lists[name].filter((listKey) => listKey !== key);
+      }
+      saveStudyData();
+      actions.lastChild.textContent = studyData.saved.includes(key) ? "Saved" : "Save";
+      actions.lastChild.setAttribute("aria-pressed", String(studyData.saved.includes(key)));
+    },
+    "button button-secondary save-word-button",
+  ));
+  actions.lastChild.setAttribute("aria-pressed", String(studyData.saved.includes(wordKey(item))));
+  row.append(word, actions);
   container.append(row);
+}
+
+function renderSavedWords() {
+  page("Saved Words & Lists", "Bookmark vocabulary and group saved words into personal study lists on this device.");
+  const createForm = element("form", "toolbar");
+  const nameField = element("div", "field");
+  const nameLabel = element("label", "", "New list name");
+  nameLabel.htmlFor = "new-list-name";
+  const nameInput = element("input", "input");
+  nameInput.id = "new-list-name";
+  nameInput.maxLength = 40;
+  nameInput.required = true;
+  nameInput.placeholder = "e.g. Words to practise";
+  nameField.append(nameLabel, nameInput);
+  const listSelectField = selectField(
+    "Show",
+    ["All saved words", ...Object.keys(studyData.lists)],
+    "All saved words",
+    null,
+    "saved-list-select",
+  );
+  createForm.append(nameField, button("Create list", () => createForm.requestSubmit()));
+  createForm.addEventListener("submit", (event) => {
+    event.preventDefault();
+    const name = nameInput.value.trim();
+    if (!name) return;
+    if (Object.keys(studyData.lists).some((existing) => existing.toLocaleLowerCase() === name.toLocaleLowerCase())) {
+      window.alert("A list with that name already exists.");
+      return;
+    }
+    studyData.lists[name] = [];
+    saveStudyData();
+    renderSavedWords();
+  });
+  appElement.append(createForm, listSelectField.wrapper);
+  const currentList = listSelectField.select;
+  const listActions = element("div", "toolbar");
+  if (currentList.value !== "All saved words") {
+    listActions.append(button("Delete this list", () => {
+      if (!window.confirm(`Delete the list “${currentList.value}”? Saved words will remain bookmarked.`)) return;
+      delete studyData.lists[currentList.value];
+      saveStudyData();
+      renderSavedWords();
+    }, "button button-secondary"));
+  }
+  appElement.append(listActions);
+  const rows = element("div", "results-list");
+  appElement.append(rows);
+  const renderList = () => {
+    rows.replaceChildren();
+    const selectedName = currentList.value;
+    const keys = selectedName === "All saved words"
+      ? studyData.saved
+      : studyData.lists[selectedName] || [];
+    const items = keys.map((key) => vocabulary.find((item) => wordKey(item) === key)).filter(Boolean);
+    if (!items.length) {
+      rows.append(element("div", "empty-state", selectedName === "All saved words"
+        ? "No saved words yet. Use Save beside a word while browsing or searching."
+        : "This list is empty. Save words first, then add them to this list."));
+      return;
+    }
+    for (const item of items) {
+      const row = element("article", "word-row");
+      const description = element("div");
+      description.append(
+        element("div", "word-noongar", item.noongar),
+        element("div", "word-english", item.english),
+        element("div", "word-category", item.category),
+      );
+      const actions = element("div", "word-actions");
+      actions.append(createPronounceButton(item.noongar));
+      const key = wordKey(item);
+      const reviewedButton = button(
+        studyData.reviewed.includes(key) ? "Reviewed" : "Mark reviewed",
+        () => {
+          if (!studyData.reviewed.includes(key)) studyData.reviewed.push(key);
+          saveStudyData();
+          reviewedButton.textContent = "Reviewed";
+          reviewedButton.disabled = true;
+        },
+        "button button-secondary save-word-button",
+      );
+      reviewedButton.disabled = studyData.reviewed.includes(key);
+      actions.append(reviewedButton);
+      if (selectedName !== "All saved words") {
+        actions.append(button("Remove from list", () => {
+          studyData.lists[selectedName] = studyData.lists[selectedName].filter((key) => key !== wordKey(item));
+          saveStudyData();
+          renderList();
+        }, "button button-secondary save-word-button"));
+      } else if (Object.keys(studyData.lists).length) {
+        const destination = document.createElement("select");
+        destination.className = "select list-destination";
+        destination.setAttribute("aria-label", `Add ${item.noongar} to a list`);
+        for (const name of Object.keys(studyData.lists)) destination.add(new Option(name, name));
+        actions.append(destination, button("Add to list", () => {
+          const values = studyData.lists[destination.value];
+          if (!values.includes(wordKey(item))) values.push(wordKey(item));
+          saveStudyData();
+          renderList();
+        }, "button button-secondary save-word-button"));
+      }
+      actions.append(button("Remove saved", () => {
+        const key = wordKey(item);
+        studyData.saved = studyData.saved.filter((savedKey) => savedKey !== key);
+        for (const name of Object.keys(studyData.lists)) {
+          studyData.lists[name] = studyData.lists[name].filter((listKey) => listKey !== key);
+        }
+        saveStudyData();
+        renderSavedWords();
+      }, "button button-secondary save-word-button"));
+      row.append(description, actions);
+      rows.append(row);
+    }
+  };
+  currentList.addEventListener("change", () => {
+    listActions.replaceChildren();
+    if (currentList.value !== "All saved words") {
+      listActions.append(button("Delete this list", () => {
+        if (!window.confirm(`Delete the list “${currentList.value}”? Saved words will remain bookmarked.`)) return;
+        delete studyData.lists[currentList.value];
+        saveStudyData();
+        renderSavedWords();
+      }, "button button-secondary"));
+    }
+    renderList();
+  });
+  renderList();
 }
 
 function renderSearch() {
@@ -306,7 +535,23 @@ function showCategoryWords(category) {
           element("div", "category-word-primary", item[primaryLanguage]),
           element("div", "category-word-secondary", item[secondaryLanguage]),
         );
-        row.append(words, createPronounceButton(item.noongar));
+        const actions = element("div", "word-actions");
+        actions.append(createPronounceButton(item.noongar));
+        const key = wordKey(item);
+        const saveButton = button(studyData.saved.includes(key) ? "Saved" : "Save", () => {
+          studyData.saved = studyData.saved.includes(key)
+            ? studyData.saved.filter((savedKey) => savedKey !== key)
+            : [...studyData.saved, key];
+          if (!studyData.saved.includes(key)) {
+            for (const name of Object.keys(studyData.lists)) {
+              studyData.lists[name] = studyData.lists[name].filter((listKey) => listKey !== key);
+            }
+          }
+          saveStudyData();
+          saveButton.textContent = studyData.saved.includes(key) ? "Saved" : "Save";
+        }, "button button-secondary save-word-button");
+        actions.append(saveButton);
+        row.append(words, actions);
         results.append(row);
       });
   }
@@ -331,6 +576,18 @@ function renderFlashcards() {
   const category = element("div", "flashcard-category", " ");
   const actions = element("div", "card-actions");
   let currentFlashcardWord = "";
+  const saveButton = button("Save word", () => {
+    const current = flashcards[flashcardIndex];
+    const key = wordKey(current);
+    studyData.saved = studyData.saved.includes(key)
+      ? studyData.saved.filter((savedKey) => savedKey !== key)
+      : [...studyData.saved, key];
+    for (const name of Object.keys(studyData.lists)) {
+      studyData.lists[name] = studyData.lists[name].filter((listKey) => listKey !== key);
+    }
+    saveStudyData();
+    updateFlashcard();
+  }, "button button-secondary");
   const pronounceButton = button(
     "🔊",
     () => pronounceNoongarWord(currentFlashcardWord),
@@ -345,6 +602,11 @@ function renderFlashcards() {
     revealed = true;
     answer.textContent = flashcards[flashcardIndex].english;
     category.textContent = flashcards[flashcardIndex].category;
+    const key = wordKey(flashcards[flashcardIndex]);
+    if (!studyData.reviewed.includes(key)) {
+      studyData.reviewed.push(key);
+      saveStudyData();
+    }
     revealButton.disabled = true;
   });
   const previousButton = button("Previous card", () => {
@@ -362,7 +624,7 @@ function renderFlashcards() {
     flashcardIndex = 0;
     updateFlashcard();
   }, "button button-secondary");
-  actions.append(previousButton, pronounceButton, revealButton, nextButton, shuffleButton);
+  actions.append(previousButton, pronounceButton, revealButton, saveButton, nextButton, shuffleButton);
   card.append(counter, word, answer, category, actions);
   appElement.append(card);
 
@@ -375,6 +637,7 @@ function renderFlashcards() {
       revealButton.disabled = true;
       nextButton.disabled = true;
       pronounceButton.disabled = true;
+      saveButton.disabled = true;
       return;
     }
     revealed = false;
@@ -389,6 +652,8 @@ function renderFlashcards() {
     word.textContent = current.noongar;
     answer.textContent = revealed ? current.english : " ";
     category.textContent = revealed ? current.category : " ";
+    saveButton.textContent = studyData.saved.includes(wordKey(current)) ? "Remove saved" : "Save word";
+    saveButton.disabled = false;
     revealButton.disabled = revealed;
     pronounceButton.disabled = !(
       "speechSynthesis" in window
@@ -426,7 +691,7 @@ function renderQuizSetup() {
     "Choose one category or draw questions from across the whole dictionary. Use the speaker button to hear an approximate pronunciation.",
   );
   const toolbar = element("div", "toolbar");
-  const categoryField = selectField("Question set", [ALL_CATEGORIES, ...categories], ALL_CATEGORIES, null, "quiz-category");
+  const categoryField = selectField("Question set", [ALL_CATEGORIES, "Practice missed words", ...categories], ALL_CATEGORIES, null, "quiz-category");
   const countWrapper = element("div", "field");
   const countLabel = element("label", "", "Number of questions");
   countLabel.htmlFor = "quiz-count";
@@ -443,10 +708,17 @@ function renderQuizSetup() {
 }
 
 function startQuiz(category, countValue) {
-  const pool = category === ALL_CATEGORIES
-    ? vocabulary
-    : vocabulary.filter((item) => item.category === category);
-  const distinctAnswers = [...new Set(pool.map((item) => item.english.toLocaleLowerCase()))];
+  const pool = category === "Practice missed words"
+    ? vocabulary.filter((item) => studyData.missed.includes(wordKey(item)))
+    : category === ALL_CATEGORIES
+      ? vocabulary
+      : vocabulary.filter((item) => item.category === category);
+  if (!pool.length) {
+    appElement.append(element("div", "empty-state", "There are no missed words to practise yet. Complete a quiz and try some missed-word practice."));
+    return;
+  }
+  const answersPool = category === "Practice missed words" ? vocabulary : pool;
+  const distinctAnswers = [...new Set(answersPool.map((item) => item.english.toLocaleLowerCase()))];
   if (distinctAnswers.length < 2) {
     appElement.append(element("div", "error-state", "This set needs at least two different English meanings for a quiz."));
     return;
@@ -507,6 +779,8 @@ function renderQuizQuestion() {
   const correctKey = question.english.toLocaleLowerCase();
   const optionPool = quiz.category === ALL_CATEGORIES
     ? quiz.pool
+    : quiz.category === "Practice missed words"
+      ? vocabulary
     : quiz.pool.filter((item) => item.category === quiz.category);
   const distractors = [...new Map(
     optionPool
@@ -530,12 +804,15 @@ function renderQuizQuestion() {
     if (selected.value.toLocaleLowerCase() === correctKey) {
       quiz.correct += 1;
       stats.correct += 1;
+      studyData.missed = studyData.missed.filter((key) => key !== wordKey(question));
       feedback.textContent = "Correct! Well done.";
       feedback.className = "feedback correct";
     } else {
+      if (!studyData.missed.includes(wordKey(question))) studyData.missed.push(wordKey(question));
       feedback.textContent = `Not quite. The answer is: ${question.english}`;
       feedback.className = "feedback incorrect";
     }
+    saveStudyData();
     submit.textContent = "Next question";
     submit.onclick = () => {
       quiz.index += 1;
@@ -558,7 +835,7 @@ function renderQuizQuestion() {
 }
 
 function renderStats() {
-  page("Session Statistics", "Quiz results are kept only while this page is open.");
+  page("Study Progress", "Quiz totals, reviewed words, and missed-word practice are saved on this device.");
   const accuracy = stats.attempted
     ? `${(stats.correct / stats.attempted * 100).toFixed(1)}%`
     : "Not available yet";
@@ -567,20 +844,24 @@ function renderStats() {
     [stats.attempted, "Questions attempted"],
     [stats.correct, "Correct answers"],
     [accuracy, "Accuracy"],
+    [studyData.reviewed.length, "Words reviewed"],
+    [studyData.missed.length, "Words to practise"],
+    [studyData.saved.length, "Saved words"],
   ]) {
     const card = element("div", "stat-card");
     card.append(element("span", "stat-number", String(value)), element("span", "stat-label", label));
     strip.append(card);
   }
   appElement.append(strip);
-  if (stats.attempted) {
-    appElement.append(button("Reset statistics", () => {
-      if (!window.confirm("Reset your quiz statistics for this visit?")) return;
-      stats.attempted = 0;
-      stats.correct = 0;
-      renderStats();
-    }, "button button-secondary"));
-  }
+  appElement.append(button("Clear learning progress", () => {
+    if (!window.confirm("Clear quiz totals, reviewed words, and missed-word practice? Saved words and lists will be kept.")) return;
+    studyData.attempted = 0;
+    studyData.correct = 0;
+    studyData.reviewed = [];
+    studyData.missed = [];
+    saveStudyData();
+    renderStats();
+  }, "button button-secondary"));
 }
 
 for (const nav of navButtons) {
@@ -596,6 +877,7 @@ async function startApp() {
     vocabulary = readDictionary(await response.text());
     if (!vocabulary.length) throw new Error("The dictionary has no usable vocabulary rows.");
     categories = [...new Set(vocabulary.map((item) => item.category))].sort((a, b) => a.localeCompare(b));
+    loadStudyData();
     statusElement.textContent = `${vocabulary.length} terms · ${categories.length} categories`;
     setView(currentView);
   } catch (error) {
@@ -620,6 +902,9 @@ document.querySelector("#install-button").addEventListener("click", async () => 
   deferredInstallPrompt = null;
   document.querySelector("#install-button").hidden = true;
 });
+
+document.querySelector("#font-smaller").addEventListener("click", () => changeFontScale(-10));
+document.querySelector("#font-larger").addEventListener("click", () => changeFontScale(10));
 
 if ("serviceWorker" in navigator && (location.protocol === "https:" || location.hostname === "localhost")) {
   window.addEventListener("load", () => {

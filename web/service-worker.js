@@ -1,11 +1,11 @@
 "use strict";
 
-const CACHE_NAME = "noongar-learner-v13";
+const CACHE_NAME = "noongar-learner-v16";
 const APP_FILES = [
   "./",
   "./index.html",
-  "./styles.css",
-  "./app.js?v=13",
+  "./styles.css?v=16",
+  "./app.js?v=16",
   "./manifest.webmanifest",
   "./icon.svg",
   "./icon-180.png",

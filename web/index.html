@@ -9,7 +9,7 @@
     <link rel="manifest" href="./manifest.webmanifest">
     <link rel="icon" href="./icon.svg" type="image/svg+xml">
     <link rel="apple-touch-icon" href="./icon-180.png">
-    <link rel="stylesheet" href="./styles.css">
+    <link rel="stylesheet" href="./styles.css?v=16">
   </head>
   <body>
     <header class="site-header">
@@ -17,7 +17,13 @@
         <span class="brand-mark" aria-hidden="true">N</span>
         <span>Noongar <span class="brand-light">Language Learner</span></span>
       </a>
-      <button id="install-button" class="button button-outline install-button" hidden>Install app</button>
+      <div class="header-actions">
+        <div class="font-controls" aria-label="Text size controls">
+          <button id="font-smaller" class="button button-outline" type="button" aria-label="Decrease text size">A−</button>
+          <button id="font-larger" class="button button-outline" type="button" aria-label="Increase text size">A+</button>
+        </div>
+        <button id="install-button" class="button button-outline install-button" hidden>Install app</button>
+      </div>
     </header>
 
     <nav class="tab-bar" aria-label="Main navigation">
@@ -26,7 +32,7 @@
       <button class="tab" data-view="categories"><span aria-hidden="true">▦</span> Categories</button>
       <button class="tab" data-view="flashcards"><span aria-hidden="true">▤</span> Cards</button>
       <button class="tab" data-view="quiz"><span aria-hidden="true">✓</span> Quiz</button>
-      <button class="tab" data-view="stats"><span aria-hidden="true">◷</span> Stats</button>
+      <button class="tab" data-view="stats"><span aria-hidden="true">◷</span> Progress</button>
     </nav>
 
     <main id="app" class="main-content" tabindex="-1">
@@ -38,8 +44,8 @@
 
     <footer class="site-footer">
       <span id="dictionary-status">Loading dictionary</span>
-      <span>Learning and practicing Noongar vocabulary</span>
+      <span>The intention is education. I acknowledge that words may be spelled or spoken differently across families, regions and other resources.</span>
     </footer>
-    <script src="./app.js?v=13" defer></script>
+    <script src="./app.js?v=16" defer></script>
   </body>
 </html>
