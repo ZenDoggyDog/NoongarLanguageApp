@@ -107,4 +107,3 @@ summaries, and quiz-option construction.
 - `tests/` — automated unit tests.
 - [ARCHITECTURE.md](./ARCHITECTURE.md) — architecture and data-flow diagram.
 - [AI-LOG.md](./AI-LOG.md) — record of AI-assisted development and checks.
-
