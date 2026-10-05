@@ -9,7 +9,6 @@ python3 -m PyInstaller \
   --onedir \
   --name "Noongar Language Learner" \
   --add-data "Noongar categories.csv:." \
-  --add-data "web/audio:audio" \
   noongar.py
 
 echo

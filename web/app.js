@@ -1,7 +1,6 @@
 "use strict";
 
 const CSV_URL = "./Noongar%20categories.csv?v=7";
-const PRONUNCIATION_MANIFEST_URL = "./audio/manifest.json?v=1";
 const ALL_CATEGORIES = "All categories";
 
 const appElement = document.querySelector("#app");
@@ -15,8 +14,6 @@ let flashcardIndex = 0;
 let revealed = false;
 let quiz = null;
 let deferredInstallPrompt = null;
-let pronunciationFiles = {};
-let currentPronunciationAudio = null;
 
 function parseCsv(text) {
   const rows = [];
@@ -95,50 +92,20 @@ function button(text, onClick, className = "button") {
 }
 
 function createPronounceButton(word) {
-  const supported = typeof window.Audio === "function"
-    || ("speechSynthesis" in window
-      && typeof window.SpeechSynthesisUtterance === "function");
+  const supported = "speechSynthesis" in window
+    && typeof window.SpeechSynthesisUtterance === "function";
   const control = button(
     "🔊",
     () => pronounceNoongarWord(word),
     "button button-secondary speaker-button",
   );
   control.setAttribute("aria-label", `Pronounce Noongar word ${word}`);
-  control.title = "Play generated pronunciation when available; otherwise use device speech.";
+  control.title = "Play an approximate pronunciation using your device voice.";
   control.disabled = !supported;
   return control;
 }
 
 function pronounceNoongarWord(word) {
-  const filename = pronunciationFiles[word];
-  if (filename && typeof window.Audio === "function") {
-    if ("speechSynthesis" in window) window.speechSynthesis.cancel();
-    if (currentPronunciationAudio) currentPronunciationAudio.pause();
-    const audio = new window.Audio(`./audio/${filename}`);
-    currentPronunciationAudio = audio;
-    audio.addEventListener("error", () => {
-      if (currentPronunciationAudio !== audio) return;
-      console.error(`Could not load generated pronunciation for "${word}".`);
-      currentPronunciationAudio = null;
-      pronounceWithDeviceVoice(word);
-    }, { once: true });
-    audio.play().catch((error) => {
-      if (currentPronunciationAudio !== audio) return;
-      console.error(`Could not play generated pronunciation for "${word}":`, error);
-      currentPronunciationAudio = null;
-      pronounceWithDeviceVoice(word);
-    });
-    return;
-  }
-  pronounceWithDeviceVoice(word);
-}
-
-function pronounceWithDeviceVoice(word) {
-  if (!("speechSynthesis" in window)
-    || typeof window.SpeechSynthesisUtterance !== "function") {
-    console.error(`No generated audio or device speech is available for "${word}".`);
-    return;
-  }
   const synthesis = window.speechSynthesis;
   const utterance = new window.SpeechSynthesisUtterance(word);
   const voices = synthesis.getVoices();
@@ -158,27 +125,6 @@ function pronounceWithDeviceVoice(word) {
   };
   synthesis.cancel();
   synthesis.speak(utterance);
-}
-
-async function loadPronunciationManifest() {
-  const response = await fetch(PRONUNCIATION_MANIFEST_URL);
-  if (!response.ok) {
-    throw new Error(
-      `Could not load pronunciation audio data (HTTP ${response.status}).`,
-    );
-  }
-  const manifest = await response.json();
-  if (!manifest.files || typeof manifest.files !== "object"
-    || Array.isArray(manifest.files)) {
-    throw new Error("The pronunciation audio manifest has an invalid format.");
-  }
-  const validFilename = /^[0-9a-f]{64}\.wav$/;
-  for (const [word, filename] of Object.entries(manifest.files)) {
-    if (typeof word !== "string" || !validFilename.test(filename)) {
-      throw new Error("The pronunciation audio manifest has an invalid entry.");
-    }
-  }
-  pronunciationFiles = manifest.files;
 }
 
 function selectField(labelText, options, selectedValue, onChange, labelFor) {
@@ -438,7 +384,7 @@ function renderFlashcards() {
       "aria-label",
       `Pronounce Noongar word ${current.noongar}`,
     );
-    pronounceButton.title = `Play generated pronunciation of ${current.noongar} when available; otherwise use device speech.`;
+    pronounceButton.title = `Play an approximate device-voice pronunciation of ${current.noongar}.`;
     counter.textContent = `Card ${flashcardIndex + 1} of ${flashcards.length}`;
     word.textContent = current.noongar;
     answer.textContent = revealed ? current.english : " ";
@@ -643,10 +589,7 @@ for (const nav of navButtons) {
 
 async function startApp() {
   try {
-    const [response] = await Promise.all([
-      fetch(CSV_URL),
-      loadPronunciationManifest(),
-    ]);
+    const response = await fetch(CSV_URL);
     if (!response.ok) {
       throw new Error(`Could not load the dictionary data (HTTP ${response.status}).`);
     }

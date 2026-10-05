@@ -1,6 +1,4 @@
 import csv
-import hashlib
-import json
 import random
 import shutil
 import subprocess
@@ -70,30 +68,6 @@ def load_vocabulary(csv_path):
     return vocabulary
 
 
-def find_pronunciation_directory():
-    if getattr(sys, "frozen", False):
-        return Path(sys._MEIPASS) / "audio"
-    return Path(__file__).resolve().parent / "web" / "audio"
-
-
-def load_pronunciation_files(audio_directory):
-    manifest_path = audio_directory / "manifest.json"
-    if not manifest_path.is_file():
-        return {}
-    with manifest_path.open(encoding="utf-8") as manifest_file:
-        manifest = json.load(manifest_file)
-    files = manifest.get("files")
-    if not isinstance(files, dict):
-        raise ValueError("The pronunciation audio manifest has an invalid format.")
-    for word, filename in files.items():
-        expected_name = f"{hashlib.sha256(word.encode('utf-8')).hexdigest()}.wav"
-        if filename != expected_name:
-            raise ValueError(
-                f"The pronunciation audio entry for '{word}' has an invalid filename."
-            )
-    return files
-
-
 class NoongarApp:
     def __init__(self, root):
         self.root = root
@@ -103,10 +77,6 @@ class NoongarApp:
 
         try:
             self.vocab = load_vocabulary(find_dictionary_file())
-            self.pronunciation_audio_directory = find_pronunciation_directory()
-            self.pronunciation_files = load_pronunciation_files(
-                self.pronunciation_audio_directory
-            )
         except (OSError, ValueError) as error:
             messagebox.showerror("Could not load dictionary", str(error), parent=root)
             root.destroy()
@@ -255,48 +225,6 @@ class NoongarApp:
             child.destroy()
 
     def speak_noongar(self, word):
-        filename = self.pronunciation_files.get(word)
-        if filename:
-            audio_path = self.pronunciation_audio_directory / filename
-            executable = shutil.which("afplay")
-            if not audio_path.is_file():
-                messagebox.showerror(
-                    "Pronunciation audio unavailable",
-                    f"The generated audio file for '{word}' could not be found.",
-                    parent=self.root,
-                )
-                return
-            if executable is None:
-                messagebox.showerror(
-                    "Audio playback unavailable",
-                    "This device does not have the macOS audio player available.",
-                    parent=self.root,
-                )
-                return
-            if self.speech_process and self.speech_process.poll() is None:
-                self.speech_process.terminate()
-            try:
-                self.speech_process = subprocess.Popen(
-                    [executable, str(audio_path)],
-                    stdout=subprocess.DEVNULL,
-                    stderr=subprocess.PIPE,
-                    text=True,
-                )
-            except OSError as error:
-                messagebox.showerror(
-                    "Could not play pronunciation",
-                    str(error),
-                    parent=self.root,
-                )
-                return
-            self.root.after(
-                100,
-                self.check_speech_process,
-                self.speech_process,
-                word,
-            )
-            return
-
         executable = shutil.which("say")
         if executable is None:
             messagebox.showerror(

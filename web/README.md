@@ -3,9 +3,9 @@
 This is a responsive, installable web app for iPhone and Android. It includes
 dictionary search, category browsing with English/Noongar sorting, flashcards,
 quizzes, device text-to-speech buttons, and quiz statistics for the current
-page visit. It does not use the downloaded dictionary images. Generated WAV
-pronunciations are played when available; otherwise speech falls back to the
-device voice. Machine-generated pronunciation may be inaccurate for Noongar.
+page visit. It does not use the downloaded dictionary images. Speaker buttons
+use the device's built-in text-to-speech voice, which may not pronounce Noongar
+words accurately. The app does not download or use generated WAV files.
 Quiz statistics reset when the page is reloaded or reopened.
 
 ## Published app
@@ -19,37 +19,6 @@ stay in that page session only.
 The web app reads `Noongar categories.csv` from this folder. After editing the
 project's main CSV, run `./sync_web_data.command` from the project folder to
 copy the latest dictionary into this web app.
-
-## Generate pronunciation audio
-
-The project includes `generate_pronunciations.py`, which creates one Google
-Gemini TTS WAV for each distinct Noongar word and saves it under `web/audio`.
-It resumes from its manifest and existing files. The dictionary currently
-contains 628 distinct Noongar words. Review Google's API terms and current
-pricing before generation; the free tier may use submitted content to improve
-Google products, and paid-tier usage may incur charges.
-
-Create an API key in Google AI Studio, then set it locally without adding it to
-the source files:
-
-```sh
-read -s "GEMINI_API_KEY?Google AI Studio API key: "
-echo
-export GEMINI_API_KEY
-python3 generate_pronunciations.py --limit 1
-```
-
-After listening to the sample WAV, generate the remaining words by running:
-
-```sh
-python3 generate_pronunciations.py
-unset GEMINI_API_KEY
-```
-
-The default voice and broad-Australian style can be customized with
-`--voice` and `--style`. The generated clips are used in both apps. Redeploy
-the contents of `web/` to publish the web audio; rebuild the macOS app with
-`./build_app.command` to include audio in its bundle.
 
 ## Preview on this computer
 
