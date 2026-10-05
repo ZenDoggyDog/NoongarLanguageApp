@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <meta name="theme-color" content="#101010">
+    <meta name="description" content="Browse and practice Noongar vocabulary by category.">
+    <title>Noongar Language Learner</title>
+    <link rel="manifest" href="./manifest.webmanifest">
+    <link rel="icon" href="./icon.svg" type="image/svg+xml">
+    <link rel="apple-touch-icon" href="./icon-180.png">
+    <link rel="stylesheet" href="./styles.css">
+  </head>
+  <body>
+    <header class="site-header">
+      <a class="brand" href="#home" aria-label="Noongar Language Learner home">
+        <span class="brand-mark" aria-hidden="true">N</span>
+        <span>Noongar <span class="brand-light">Language Learner</span></span>
+      </a>
+      <button id="install-button" class="button button-outline install-button" hidden>Install app</button>
+    </header>
+
+    <nav class="tab-bar" aria-label="Main navigation">
+      <button class="tab active" data-view="home" aria-current="page"><span aria-hidden="true">⌂</span> Home</button>
+      <button class="tab" data-view="search"><span aria-hidden="true">⌕</span> Search</button>
+      <button class="tab" data-view="categories"><span aria-hidden="true">▦</span> Categories</button>
+      <button class="tab" data-view="flashcards"><span aria-hidden="true">▤</span> Cards</button>
+      <button class="tab" data-view="quiz"><span aria-hidden="true">✓</span> Quiz</button>
+      <button class="tab" data-view="stats"><span aria-hidden="true">◷</span> Stats</button>
+    </nav>
+
+    <main id="app" class="main-content" tabindex="-1">
+      <section class="loading-card" role="status">
+        <span class="loader" aria-hidden="true"></span>
+        <p>Loading the dictionary…</p>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <span id="dictionary-status">Loading dictionary</span>
+      <span>Learning and practicing Noongar vocabulary</span>
+    </footer>
+    <script src="./app.js?v=12" defer></script>
+  </body>
+</html>
