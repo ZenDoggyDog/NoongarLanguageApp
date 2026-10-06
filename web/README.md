@@ -16,7 +16,7 @@ leaving saved lists intact.
 
 ## Published app
 
-The app is live over HTTPS at <https://celadon-puppy-c1389f.netlify.app/>.
+The app is live over HTTPS at <https://noongar-language-learner.netlify.app/>.
 Anyone with the link can open it in a browser. Each visitor's study data stays
 in that browser's local storage.
 
