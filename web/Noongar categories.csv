@@ -1,21 +1,21 @@
 English,Noongar,Category
 above,yira,Descriptive Concepts
 acacia tree,koonart,Plants & Trees
-accurate,medjil,Animals
+accurate,medjil,Descriptive Concepts
 achilles tendon,mirl,Body Parts
-acknowledging,ana,Birds
+acknowledging,ana,Actions & Verbs
 across,kardu werta,Grammar structural words
 adorn,kanangoor,Actions & Verbs
 afraid (of someone),wuyaminy,States & Qualities
 after,ngolangu,Grammar structural words
-ahead,koodjookat,Descriptive Concepts
+ahead,koodjookat,Grammar structural words
 aim (to miss),wilyan,Actions & Verbs
 aiming,weyaniny,Actions & Verbs
 also,kidji,Grammar structural words
 always,kalyagool,Abstract Concepts
 and,kidji,Grammar structural words
-angry,karang,Descriptive Concepts
-angry (becoming),karangubiny,Descriptive Concepts
+angry,karang,States & Qualities
+angry (becoming),karangubiny,States & Qualities
 animal (stray),barna,Animals
 ankle (inside),balkart,Body Parts
 ankle (outside),darnt,Body Parts
@@ -26,17 +26,17 @@ ant (meat ant),minyit,Animals
 ant (small black argentine),boodjiny,Animals
 anthill (termite),widjet,Animals
 anus,kwan,Body Parts
-anyhow,koordoin,Cultural & Social Concepts
+anyhow,koordoin,Descriptive Concepts
 armpit,ngauly,Body Parts
-ashamed,koonanginy,Abstract Concepts
+ashamed,koonanginy,States & Qualities
 assault,baladjin,Actions & Verbs
 attention here,ni,Grammar structural words
 aunty,kongk,People & Family
 aunty (father's sister),mawin yok,People & Family
 awake,biyou,States & Qualities
-away,boukart yen,Abstract Concepts
+away,boukart yen,Descriptive Concepts
 axe (small),koitj,Objects & Tools
-baby sun,mawuit,People & Family
+baby sun,mawuit,Cultural & Social Concepts
 back,moordin,Body Parts
 back (part of),moorlany,Body Parts
 back lumbar region,bookarl,Body Parts
@@ -44,33 +44,33 @@ back passage,narn,Body Parts
 back to,woonoona,Body Parts
 backside,koon,Body Parts
 bad,wara,Descriptive Concepts
-bad spirit,boodjiny,Descriptive Concepts
+bad spirit,boodjiny,Cultural & Social Concepts
 bandicoot,kwendu,Animals
 banksia ,mang,Plants & Trees
 barn owl call,kaa,Birds
 bark,boorn,Plants & Trees
 barter,bangalangu,Actions & Verbs
 bat,babitj,Animals
-beak,dji,Body Parts
+beak,dji,Birds
 beard,djowiny,Body Parts
 beautiful,kwobiduk,Descriptive Concepts
 beer ,kawoon,Food & Drink
 before,koora,Grammar structural words
 becoming keen on someone,djoorabiny,Actions & Verbs
-behind,koorlboorli,Grammar structural words
+behind,koorlboorli,Descriptive Concepts
 belly,koboorl,Body Parts
 belt,djoorlib,Objects & Tools
 berry,mol,Plants & Trees
-beyond,moonboorli,Cultural & Social Concepts
+beyond,moonboorli,Descriptive Concepts
 big,koomba,Descriptive Concepts
 bird,djerap,Birds
 bite,baakan,Actions & Verbs
 bite/hurt,bada mandon,Actions & Verbs
 bitter,koon,Descriptive Concepts
-black,balatj,States & Qualities
-blackboy,balak,People & Family
-blackboy (with red gum),bila,People & Family
-blackboy forest,djaril-muri,People & Family
+black,balatj,Descriptive Concepts
+blackboy,balak,Plants & Trees
+blackboy (with red gum),bila,Plants & Trees
+blackboy forest,djaril-muri,Plants & Trees
 black cockatoo,manatj,Birds
 black duck,ngwonan,Birds
 black feather,karak,Birds
@@ -112,7 +112,7 @@ carpet snake,wakarl,Animals
 carrot,koordiny,Plants & Trees
 carry bag,kooda-kooda,Objects & Tools
 carrying dish,mirkoorn,Objects & Tools
-cataract,bambala,Descriptive Concepts
+cataract,bambala,Body Parts
 catapillar,ngana,Animals
 catle,boolok,Animals
 cave,doomboon,Buildings & Places
@@ -147,7 +147,7 @@ cockatoos ,ngoolyanaks,Birds
 cold,nyidiny,Descriptive Concepts
 come,yoowalkoorl,Actions & Verbs
 comical,koobar,States & Qualities
-coming down,werdiny,Grammar structural words
+coming down,werdiny,Actions & Verbs
 contiually ,kalyogool,States & Qualities
 cook,dookern,Food & Drink
 cooroboree,midar,Cultural & Social Concepts
@@ -156,7 +156,7 @@ country,boodjera,Buildings & Places
 cousin (brother),ngoorden,People & Family
 cousin (sister),deman,People & Family
 cow,boolok,Animals
-coward,wayarn,Animals
+coward,wayarn,People & Family
 crawling,barniny,Actions & Verbs
 crayfish,marron,Animals
 creek,birl,Buildings & Places
@@ -172,22 +172,22 @@ dance,kakarook,Actions & Verbs
 dandelions,djrp,Plants & Trees
 dark,doodja,Descriptive Concepts
 dark times,moordang,Descriptive Concepts
-darling ranges,katamordo,Cultural & Social Concepts
+darling ranges,katamordo,Nature & Landforms
 daughter,yoka,People & Family
 dawn,djidar,Nature & Landforms
 day,kedalu,Nature & Landforms
 daylight,ben,Nature & Landforms
 dead,nootj,States & Qualities
 deaf,dwankaboort,States & Qualities
-deceitful,koolymoot,States & Qualities
-desires woman,bandji,People & Family
-desires opposite sex,mardong,Cultural & Social Concepts
+deceitful,koolymoot,Actions & Verbs
+desires woman,bandji,Actions & Verbs
+desires opposite sex,mardong,Actions & Verbs
 devil,djanak,Cultural & Social Concepts
-devil bird,nyoorlan,Birds
-diarrhoea,boolyaka,Descriptive Concepts
+devil bird,nyoorlan,Cultural & Social Concepts
+diarrhoea,boolyaka,Body Parts
 dig,berniny,Actions & Verbs
 digging stick,wangkiny,Objects & Tools
-digging stick (woman's),warna,People & Family
+digging stick (woman's),warna,Objects & Tools
 dingo,mokiny,Animals
 dirty,madily,Descriptive Concepts
 disbelief,nyiyarn wooniny,Abstract Concepts
@@ -222,14 +222,14 @@ embarassed,koorantj,States & Qualities
 emphasis,woorliny,Abstract Concepts
 empty,wirt,States & Qualities
 emu,waitj,Birds
-enchantment,merrik,Animals
+enchantment,merrik,States & Qualities
 entering,djarbiny,Actions & Verbs
 escape,kwibidji,Actions & Verbs
 eucalyptus,balyoongar,Plants & Trees
-evil spirit,djanak,Abstract Concepts
+evil spirit,djanak,Cultural & Social Concepts
 exchange,bangalanga,Actions & Verbs
 exclaim,keoorawoorliny,Actions & Verbs
-excrement,koomp,Descriptive Concepts
+excrement,koomp,Body Parts
 eye,mial,Body Parts
 eyebrow,mimboorn,Body Parts
 eye lash,miyal djowiny,Body Parts
@@ -238,7 +238,7 @@ fair,djarat,Descriptive Concepts
 fall,djabalariny,Actions & Verbs
 fat,djeroong,States & Qualities
 father,maaman,People & Family
-fear,koonang,States & Qualities
+fear,koonang,Descriptive Concepts
 feather,ngaly,Birds
 feet,djoowak,Body Parts
 fibber,djaawara,Descriptive Concepts
@@ -248,7 +248,7 @@ fingernail,biri,Body Parts
 fire,karla,Nature & Landforms
 fire smoke,karl boyi,Nature & Landforms
 fire stick,karlmarta,Objects & Tools
-firewood,karl boorn,Plants & Trees
+firewood,karl boorn,Objects & Tools
 firm,balgja,Descriptive Concepts
 fish,djildjit,Animals
 fishtail,bila,Animals
@@ -268,7 +268,7 @@ food,mereny,Food & Drink
 foot,djen,Body Parts
 forehead,barp,Body Parts
 forrest,djarilmari,Plants & Trees
-forever,kalyogool,Cultural & Social Concepts
+forever,kalyogool,Descriptive Concepts
 frightend,kwetiny,States & Qualities
 frog,kooyar,Animals
 from,koorliny,Grammar structural words
@@ -282,33 +282,33 @@ fur coat,bwok,Objects & Tools
 gamble,boya warbiny,Actions & Verbs
 garfish,yelin,Animals
 gecko,bibdjool,Animals
-generation (previous & future),djoowak,Animals
-generation(same),birninykoo,Animals
-gently,beddik-beddik,States & Qualities
+generation (previous & future),djoowak,People & Family
+generation(same),birninykoo,People & Family
+gently,beddik-beddik,Actions & Verbs
 get,barang,Actions & Verbs
 ghost,balyit,Cultural & Social Concepts
-giant,gjimba,Animals
+giant,gjimba,Descriptive Concepts
 girl,koorlangka,People & Family
 give,nginy,Actions & Verbs
 go,koorliny,Actions & Verbs
 goanna,yongki,Animals
 good,kwobiduk,Descriptive Concepts
-good spirit,djin-djin,Descriptive Concepts
-grain,kwolak,Nature & Landforms
+good spirit,djin-djin,Cultural & Social Concepts
+grain,kwolak,Food & Drink
 grandmother,manyoowa,People & Family
 grandparent,moyran,People & Family
 grass,djirang,Plants & Trees
 grasshopper,djidily,Animals
 greasy,djeroong,States & Qualities
-greedy,ngambali,Descriptive Concepts
+greedy,ngambali,States & Qualities
 green tree,wongin,Plants & Trees
-grey,djendal,States & Qualities
-grey haired,djendalak,Descriptive Concepts
-ground,boodjera,Buildings & Places
+grey,djendal,Descriptive Concepts
+grey haired,djendalak,Body Parts
+ground,boodjera,Nature & Landforms
 group,mart,Cultural & Social Concepts
 guilt,woolgar,Abstract Concepts
-guilty,woolgaradak,Abstract Concepts
-gully,birl,Buildings & Places
+guilty,woolgaradak,States & Qualities
+gully,birl,Nature & Landforms
 gum,min,Body Parts
 gumtree (red),koorden,Plants & Trees
 gumtree,ngarnt,Plants & Trees
@@ -317,21 +317,21 @@ guts,koboorl,Body Parts
 hair,djowiny,Body Parts
 hammer,katj,Objects & Tools
 hand,mara,Body Parts
-handsome,djeroong,Descriptive Concepts
+handsome,djeroong,States & Qualities
 hang,wariny,Actions & Verbs
-happy,djerap-djerap,Descriptive Concepts
-he,baal,Grammar structural words
+happy,djerap-djerap,States & Qualities
+he,baal,People & Family
 head,kaat,Body Parts
 heal,koort,Actions & Verbs
 hear,kadadjiny,Actions & Verbs
 heart,koort,Body Parts
-heartbeat,koort dook-nginy,Body Parts
+heartbeat,koort dook-nginy,Descriptive Concepts
 heartland,koortaboodjar,Nature & Landforms
 heart of the sun,doodja,Nature & Landforms
 heavy,moordarn,Descriptive Concepts
 heel,mon,Body Parts
 here,yimniny,Grammar structural words
-hill,kard,Buildings & Places
+hill,kard,Nature & Landforms
 hip,koolgi,Body Parts
 his,balap,Grammar structural words
 hit,baaminy,Actions & Verbs
@@ -350,25 +350,25 @@ hurry,kayirbida,Actions & Verbs
 hurt,bakan,Actions & Verbs
 hut,miya,Buildings & Places
 husband,korda,People & Family
-I,nganya,Grammar structural words
+I,nganya,People & Family
 in,bworan,Grammar structural words
 inform,boorda warang,Actions & Verbs
 insect,noordoo,Animals
 inside,bwora,Grammar structural words
 intensive,mert,States & Qualities
-intercourse,moony,Cultural & Social Concepts
+intercourse,moony,Actions & Verbs
 intestine,barak,Body Parts
-island,koordaboodjor,Buildings & Places
+island,koordaboodjor,Nature & Landforms
 itch,kardidja,Actions & Verbs
 jam tree,mangart,Plants & Trees
 jarrah,djraly,Plants & Trees
 jaw,yet,Body Parts
-jealous,mirn,Descriptive Concepts
+jealous,mirn,States & Qualities
 joey,nyarnyi,Animals
 joint,kooldji,Body Parts
 joking,awoon,Actions & Verbs
 kangaroo,yongka,Animals
-kangaroo skin,bwok,Body Parts
+kangaroo skin,bwok,Animals
 keeping,kanyiny,Actions & Verbs
 kidney,djoorp,Body Parts
 kill,wananng,Actions & Verbs
@@ -378,8 +378,8 @@ knife,darp,Objects & Tools
 know,katij,Actions & Verbs
 kookaburra,kaa-kaa,Birds
 lacking,norti,Actions & Verbs
-lake,bilya,Buildings & Places
-land,boodjera,Buildings & Places
+lake,bilya,Nature & Landforms
+land,boodjera,Nature & Landforms
 laugh,kooka,Actions & Verbs
 leaf,boorn,Plants & Trees
 left,bangal,Descriptive Concepts
@@ -387,12 +387,12 @@ leg,maat,Body Parts
 liar,djaa wara,Descriptive Concepts
 lice,kool,Animals
 lie,kwilya,Actions & Verbs
-light,ben,Cultural & Social Concepts
+light,ben,Descriptive Concepts
 lightning,babangwin,Nature & Landforms
 like,mookiny,Actions & Verbs
 limestone,djidong,Nature & Landforms
 lip,djaa,Body Parts
-liquid,djopooly-djopooly,Nature & Landforms
+liquid,djopooly-djopooly,Descriptive Concepts
 liquor,keba,Food & Drink
 listen,kadadjiny,Actions & Verbs
 little,nyit,States & Qualities
@@ -406,12 +406,12 @@ lots,boola,Cultural & Social Concepts
 lower back,bookal,Body Parts
 love,koort,Abstract Concepts
 lungs,walyan,Body Parts
-lying down,ngoorndiny,Grammar structural words
+lying down,ngoorndiny,Actions & Verbs
 mad,kaat wara,States & Qualities
 maggots,boodjark,Animals
 magic,madjitil,Abstract Concepts
-magic man,moorook,People & Family
-magic stone,molbar,Abstract Concepts
+magic man,moorook,Cultural & Social Concepts
+magic stone,molbar,Cultural & Social Concepts
 magpie,koolbardi,Birds
 make,warniny,Actions & Verbs
 mallee (red),birdidjit,Plants & Trees
@@ -423,13 +423,13 @@ mallee tree,moori,Plants & Trees
 man,noongar,People & Family
 man (important),warda kadak,People & Family
 man (immoral),bandjiman,People & Family
-mane,djowiny,People & Family
-many,boola,People & Family
-me,nganya,Grammar structural words
+mane,djowiny,Animals
+many,boola,Descriptive Concepts
+me,nganya,People & Family
 meat,daadja,Food & Drink
 medicine,koorin,Objects & Tools
 medicine man,kabup,People & Family
-men,yokal,Cultural & Social Concepts
+men,yokal,People & Family
 message stick,boornoo wangkiny,Objects & Tools
 meteor,binar,Nature & Landforms
 mine,ngan,Grammar structural words
@@ -443,21 +443,21 @@ money,boorndoong,Objects & Tools
 moon,dirdong,Nature & Landforms
 moonlight,mikang,Nature & Landforms
 mopoke,nyawoo-nyawoo,Birds
-morning,bina,Actions & Verbs
+morning,bina,Descriptive Concepts
 moth,bindi-bindi,Animals
 mother,ngangk,People & Family
-mountain,kard,Buildings & Places
+mountain,kard,Nature & Landforms
 mouth,djaa,Body Parts
 mud,boodjera,Nature & Landforms
 mudlark,diliboort,Birds
 mullet,kaikada,Animals
 naked,balak,Descriptive Concepts
-narrow,nooloo,States & Qualities
+narrow,nooloo,Descriptive Concepts
 navel,bily,Body Parts
 name,boorn,Abstract Concepts
 near,bardook,Descriptive Concepts
 neck,boororo,Body Parts
-night,kedalak,Nature & Landforms
+night,kedalak,Descriptive Concepts
 night hawk,nyoorlam,Birds
 night owl,yaartj,Birds
 nightbird,nyoolang,Birds
@@ -465,17 +465,17 @@ nipple,mimi,Body Parts
 no,yoowart,Grammar structural words
 nose,moly,Body Parts
 not,yoowart,Grammar structural words
-nothing,kiny,Actions & Verbs
+nothing,kiny,Descriptive Concepts
 now,yeyi,Grammar structural words
 ochre,mardaa,Nature & Landforms
 old man,mandjang,People & Family
 old woman,kabarli,People & Family
 old times,kwetyan,Cultural & Social Concepts
-one,keny,Cultural & Social Concepts
+one,keny,Descriptive Concepts
 our,ngala,Grammar structural words
 only,djel,Grammar structural words
 orphan,barnap,People & Family
-outdoors,bandak,Objects & Tools
+outdoors,bandak,Nature & Landforms
 outwards,may-may,Cultural & Social Concepts
 over,arn,Grammar structural words
 owl (barn),yoowintj,Birds
@@ -488,7 +488,7 @@ parakeet,kawart,Birds
 parched,koolbardi,States & Qualities
 parrot,kaawar,Birds
 pass wind,borp,Actions & Verbs
-path,bidi,Objects & Tools
+path,bidi,Buildings & Places
 patient,banjard,States & Qualities
 pelvis,kwilk,Body Parts
 penis,mert,Body Parts
@@ -501,21 +501,21 @@ pigeon,boorndoong,Birds
 pinching,benanginy,Actions & Verbs
 pitiful,nyomditj,States & Qualities
 place,boodjera,Buildings & Places
-plant,boorn,Animals
+plant,boorn,Plants & Trees
 play cards,warbiny,Objects & Tools
 plenty,boola,Cultural & Social Concepts
 plover,dirl-dirl,Birds
-poison,djanak,Cultural & Social Concepts
+poison,djanak,Objects & Tools
 poking,baranginy,Actions & Verbs
 police,yodila,People & Family
 pool,manang,Buildings & Places
 porpoise,kwilena,Animals
 possum,koomool,Animals
 potato,yoork,Food & Drink
-pouch,djarlboo,Cultural & Social Concepts
+pouch,djarlboo,Objects & Tools
 pouring,djaranginy,Actions & Verbs
 prawns,yala,Animals
-pregnant,boodjari,Animals
+pregnant,boodjari,States & Qualities
 pretty,koobidak,States & Qualities
 prickle bush,moonditj,Plants & Trees
 pulling,djookooriny,Actions & Verbs
@@ -537,41 +537,41 @@ relatives,ngoongoolong,People & Family
 return,korl,Actions & Verbs
 ribcage,koong,Body Parts
 rib,ngootitj,Body Parts
-river,bilya,Buildings & Places
-road,bidi,Objects & Tools
+river,bilya,Nature & Landforms
+road,bidi,Buildings & Places
 rock,boya,Nature & Landforms
 roll-over,bilang,Actions & Verbs
 rope,madji,Objects & Tools
 run,bardang,Actions & Verbs
-running water,kebitj,Food & Drink
+running water,kebitj,Nature & Landforms
 saliva,dely,Body Parts
 sad,koorlongka,Descriptive Concepts
 sand,boodjera,Nature & Landforms
-sand plain,kwongkan,Buildings & Places
+sand plain,kwongkan,Nature & Landforms
 sap,mayal,Plants & Trees
 satisfied,moorart,States & Qualities
 scabs,djiri,Body Parts
 scorpion,nindjaliny,Animals
-scratching,benanginy,Body Parts
+scratching,benanginy,Actions & Verbs
 scrawny neck,ngarnak kwetj,Body Parts
 scream,wangadan,Actions & Verbs
-sea,wardarn,Buildings & Places
-sea water,mambakoort,Food & Drink
+sea,wardarn,Nature & Landforms
+sea water,mambakoort,Nature & Landforms
 search,wardiny,Actions & Verbs
 see,djinang,Actions & Verbs
 set,wiriny,Actions & Verbs
 shade,malo,Nature & Landforms
-shadow,maliji,Nature & Landforms
+shadow,maliji,Descriptive Concepts
 shake,boongoorang,Actions & Verbs
 shame,djoo,Abstract Concepts
 shark,kwila,Animals
-she,baal,Grammar structural words
+she,baal,People & Family
 sheep,kookendjeri,Animals
 shelter,kwont,Buildings & Places
 sheoak,kwel,Plants & Trees
 shield,woonta,Objects & Tools
 shin,maat,Body Parts
-shining,kanangoor,States & Qualities
+shining,kanangoor,Descriptive Concepts
 shoe,djen booka,Objects & Tools
 short,korad,Descriptive Concepts
 shoulder,koongat,Body Parts
@@ -589,11 +589,10 @@ small,koobidja,Descriptive Concepts
 smell,dwangk,Actions & Verbs
 smoke,koorl,Nature & Landforms
 snake,moyoop,Animals
-snake (spirit),wakarl,Animals
+snake (spirit),wakarl,Cultural & Social Concepts
 snapper,yolka,Animals
-some,boola,Cultural & Social Concepts
+some,boola,Descriptive Concepts
 song,ngank,Cultural & Social Concepts
-song,doodjarak,Cultural & Social Concepts
 soon,boodawan,Cultural & Social Concepts
 sore ,bookarl,States & Qualities
 sorrowful,winyan,States & Qualities
@@ -601,24 +600,24 @@ sorry,nyorn,States & Qualities
 soul,kadjan,Abstract Concepts
 sound,moorna,Abstract Concepts
 sour,djool,Descriptive Concepts
-south,boongarl,Nature & Landforms
-south-west tribe,bibolman,Cultural & Social Concepts
+south,boongarl,Descriptive Concepts
+south-west tribe,bibolman,People & Family
 speak,wangkiny,Actions & Verbs
 spear,ketj,Objects & Tools
 spider,kar,Animals
-spirit,djanak,Abstract Concepts
-spirit snake,walkoo,Animals
+spirit,djanak,Cultural & Social Concepts
+spirit snake,walkoo,Cultural & Social Concepts
 spit,daaly,Actions & Verbs
 spouse,koort,People & Family
 springtime,dirdong,Cultural & Social Concepts
 squirt,birbin,Actions & Verbs
 stand,yoogoo,Actions & Verbs
 star,djinda,Nature & Landforms
-stare,woondoon,Nature & Landforms
+stare,woondoon,Descriptive Concepts
 stick,boornoo,Objects & Tools
 stink,noort,Descriptive Concepts
 stomach,koboorl,Body Parts
-stone,boya,Cultural & Social Concepts
+stone,boya,Nature & Landforms
 stone axe,kwetji,Objects & Tools
 stop,ngnop,Actions & Verbs
 stranger,wam,People & Family
@@ -634,8 +633,8 @@ swamp country,moyootj,Buildings & Places
 swan,maali,Birds
 sweat,kibilyang,Body Parts
 sweet,kalari,Food & Drink
-sweetheart,koorda mart,People & Family
-swiftly,kert-kert,States & Qualities
+sweetheart,koorda mart,Abstract Concepts
+swiftly,kert-kert,Actions & Verbs
 swimming,djabooly-djabooly,Actions & Verbs
 swing,wily wily,Actions & Verbs
 tail,bila,Animals
@@ -660,7 +659,7 @@ this time,dji-dji,Grammar structural words
 this one,nyiny,Grammar structural words
 this way,nyidjan,Grammar structural words
 this,nyiya,Grammar structural words
-thoughtful,kaat-dook,Abstract Concepts
+thoughtful,kaat-dook,Descriptive Concepts
 three or more,moo,Cultural & Social Concepts
 throat,wort,Body Parts
 throwing,koordidjiny,Actions & Verbs
@@ -669,7 +668,7 @@ thumb,ngangka,Body Parts
 thunder,koondam,Nature & Landforms
 tiger snake,nornt,Animals
 tie,yooniny,Actions & Verbs
-tobacco,boolkoo,Cultural & Social Concepts
+tobacco,boolkoo,Objects & Tools
 toenails,ngamari,Body Parts
 tomorrow,benang,Cultural & Social Concepts
 too,kidji,Grammar structural words
@@ -679,46 +678,46 @@ tortoise,booyi,Animals
 touch,bal,Actions & Verbs
 totem,baranga,Cultural & Social Concepts
 towards,baloong,Grammar structural words
-track,djooroot,Cultural & Social Concepts
+track,djooroot,Actions & Verbs
 travel,koorliny,Actions & Verbs
 tree,boorn,Plants & Trees
 truth,karni,Abstract Concepts
 try,djoony-djoony,Actions & Verbs
 two,koodjal,Cultural & Social Concepts
 tying,yoondiny,Actions & Verbs
-unable,weyar,States & Qualities
+unable,weyar,Descriptive Concepts
 uncle,kongk,People & Family
 underarm,ngaly,Body Parts
 understanding,kadjininy,Actions & Verbs
-uneven,dardoon,States & Qualities
+uneven,dardoon,Descriptive Concepts
 unknown,maaloop,Descriptive Concepts
 unmarried girl,boongarn,People & Family
-untrue,kata-kata,States & Qualities
+untrue,kata-kata,Descriptive Concepts
 unhappy,djoordidj,Descriptive Concepts
 up,yira,Grammar structural words
 urine,koomp,Body Parts
-useless,mookiyang,States & Qualities
+useless,mookiyang,Descriptive Concepts
 vagina,dert,Body Parts
-valley,boyal,Buildings & Places
+valley,boyal,Nature & Landforms
 vegetable,boorondoong,Food & Drink
-very,kalkada,States & Qualities
+very,kalkada,Grammar structural words
 victorious,balatj,States & Qualities
 wait,kwidi,Actions & Verbs
 walk,yabera,Actions & Verbs
 wallaby,bunya,Animals
-want,djanboort,Animals
+want,djanboort,Descriptive Concepts
 water,kapi,Food & Drink
 water rat,moytj,Animals
 water snake,madjitil,Animals
-waterfall,kep-boroong,Food & Drink
+waterfall,kep-boroong,Nature & Landforms
 wattlebird,dongkarak,Birds
-way,mart,Abstract Concepts
-we,yowa,Grammar structural words
+way,mart,Descriptive Concepts
+we,yowa,People & Family
 wear,nyininy,Actions & Verbs
 weak,wirt,Descriptive Concepts
 weapon,boordoon,Objects & Tools
-west,yirel,Nature & Landforms
-wet,balyan,States & Qualities
+west,yirel,Descriptive Concepts
+wet,balyan,Actions & Verbs
 what,ngany,Grammar structural words
 where,naatj,Grammar structural words
 who,yungar,Grammar structural words
@@ -731,8 +730,8 @@ wicked,mial,States & Qualities
 wild,maalkakoom,Descriptive Concepts
 willy wagtail,djitti-djitti,Birds
 wine,kawoon,Food & Drink
-wing,yanging,Actions & Verbs
-winter,morka,Nature & Landforms
+wing,yanging,Birds
+winter,morka,Descriptive Concepts
 woe,wardy,States & Qualities
 woman,yoka,People & Family
 wood,boorn,Plants & Trees
@@ -740,7 +739,7 @@ womb,doomboo,Body Parts
 wrist,kwoliny,Body Parts
 yes,kaya,Grammar structural words
 yoke,nadjing,Objects & Tools
-you,nganga,Grammar structural words
-you two,ngang-koodjal,Grammar structural words
+you,nganga,People & Family
+you two,ngang-koodjal,People & Family
 yours,nyoonak,Grammar structural words
 youth,koorlong-mandi,People & Family
