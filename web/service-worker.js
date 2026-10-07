@@ -1,17 +1,17 @@
 "use strict";
 
-const CACHE_NAME = "noongar-learner-v18";
+const CACHE_NAME = "noongar-learner-v19";
 const APP_FILES = [
   "./",
   "./index.html",
-  "./styles.css?v=18",
-  "./app.js?v=18",
+  "./styles.css?v=19",
+  "./app.js?v=19",
   "./manifest.webmanifest",
   "./icon.svg",
   "./icon-180.png",
   "./icon-192.png",
   "./icon-512.png",
-  "./Noongar%20categories.csv?v=7",
+  "./Noongar%20categories.csv?v=8",
 ];
 
 self.addEventListener("install", (event) => {

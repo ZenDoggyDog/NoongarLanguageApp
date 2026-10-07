@@ -1,6 +1,6 @@
 "use strict";
 
-const CSV_URL = "./Noongar%20categories.csv?v=7";
+const CSV_URL = "./Noongar%20categories.csv?v=8";
 const ALL_CATEGORIES = "All categories";
 
 const appElement = document.querySelector("#app");
